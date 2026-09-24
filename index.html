@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Colinha Eleições SP 2026</title>
+<meta name="description" content="Monte e imprima sua colinha para as eleições de 2026 em São Paulo, com foto dos candidatos e na ordem da urna.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;800&family=IBM+Plex+Mono:wght@500;700&display=swap">
+<style>
+  :root {
+    --ink: #16181d;
+    --muted: #5b6270;
+    --line: #d3d7df;
+    --paper: #ffffff;
+    --ground: #eef0f3;
+    --soft: #f5f6f8;
+    --key: #1f2229;
+    --accent: #1f5fbf;
+    --ok: #1d7a46;
+    --warn: #9a5200;
+    --bad: #b3261e;
+    --warn-bg: #fff4e0;
+    --bad-bg: #fdecea;
+    --confirma: #2e8b3e;
+    --corrige: #f28c28;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #e8eaef; --muted: #a2a9b6; --line: #343944; --paper: #1b1e24; --ground: #121418; --soft: #23272e;
+      --key: #d7dbe3; --accent: #7aa7ff; --ok: #5fcf8d; --warn: #f0b35c; --bad: #ff8a80; --warn-bg: #3a2c14; --bad-bg: #3d1f1d;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #e8eaef; --muted: #a2a9b6; --line: #343944; --paper: #1b1e24; --ground: #121418; --soft: #23272e;
+    --key: #d7dbe3; --accent: #7aa7ff; --ok: #5fcf8d; --warn: #f0b35c; --bad: #ff8a80; --warn-bg: #3a2c14; --bad-bg: #3d1f1d;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font: 15px/1.45 "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding-inline: 16px; padding-block: 20px 48px;
+  }
+  .page { max-width: 1180px; margin: 0 auto; display: grid; gap: 20px; }
+  header h1 { margin: 0 0 4px; font-size: clamp(22px, 4vw, 30px); font-weight: 800; text-wrap: balance; }
+  header p { margin: 0; color: var(--muted); max-width: 70ch; }
+  .aviso {
+    background: var(--warn-bg); color: var(--ink); border: 1px solid var(--warn); border-radius: 8px;
+    padding: 10px 14px; font-weight: 600;
+  }
+  .aviso small { display: block; font-weight: 400; color: var(--muted); margin-top: 2px; }
+  a { color: var(--accent); }
+  header .repo { margin-top: 10px; }
+  .btn-repo {
+    display: inline-block; font-weight: 700; font-size: 14px; text-decoration: none; color: var(--ink);
+    border: 1px solid var(--line); background: var(--paper); border-radius: 6px; padding: 8px 12px;
+  }
+  .btn-repo:hover { border-color: var(--accent); }
+
+  .layout { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr) 360px; align-items: start; }
+  @media (max-width: 920px) { .layout { grid-template-columns: 1fr; } .side { position: static !important; } }
+
+  .cargo { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 12px; }
+  .cargo-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+  .cargo-head h2 { margin: 0; font-size: 18px; font-weight: 800; }
+  .cargo-head h2 .ord { font: 700 13px "IBM Plex Mono", monospace; color: var(--muted); margin-right: 6px; }
+  .hint { font: 500 12px "IBM Plex Mono", monospace; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+
+  .escolha { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 10px; border-radius: 8px; background: var(--soft); }
+  .escolha .ph { width: 48px; height: 64px; border-radius: 4px; object-fit: cover; background: var(--line); flex: none; }
+  .escolha .info { flex: 1 1 160px; min-width: 0; }
+  .escolha .nm { font-weight: 800; }
+  .escolha .pt { font-size: 13px; color: var(--muted); }
+  .escolha .vazio { color: var(--muted); }
+  .manual { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .manual label { font-size: 13px; color: var(--muted); }
+  input[type=text], input[type=search], select {
+    font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); min-width: 0;
+  }
+  input.num { font: 700 17px "IBM Plex Mono", monospace; width: 8ch; letter-spacing: .1em; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  button { font: 700 14px "Archivo", sans-serif; border: 1px solid var(--line); border-radius: 6px; padding: 8px 12px; cursor: pointer; background: var(--paper); color: var(--ink); }
+  button.branco { background: #fff; color: #1a1a1a; border-color: #9aa0aa; }
+  button.limpar { background: var(--corrige); color: #1a1a1a; border-color: var(--corrige); }
+  button.imprimir { background: var(--confirma); color: #fff; border-color: var(--confirma); font-size: 16px; padding: 12px 18px; }
+
+  .msg { font-size: 13px; padding: 6px 10px; border-radius: 6px; }
+  .msg:empty { display: none; }
+  .msg.ok { color: var(--ok); padding-inline: 0; }
+  .msg.warn { color: var(--ink); background: var(--warn-bg); }
+  .msg.bad { color: var(--ink); background: var(--bad-bg); border-left: 3px solid var(--bad); }
+
+  .filtros { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filtros select { flex: 1 1 200px; }
+  .filtros input { flex: 2 1 200px; }
+
+  .grade { display: grid; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); gap: 8px; }
+  .cand {
+    display: grid; grid-template-rows: auto auto auto; gap: 4px; text-align: left; padding: 6px; border-radius: 8px;
+    border: 1px solid var(--line); background: var(--paper); font-weight: 400; position: relative;
+  }
+  .cand:hover { border-color: var(--accent); }
+  .cand[aria-pressed="true"] { border: 2px solid var(--confirma); padding: 5px; background: var(--soft); }
+  .cand .foto { width: 100%; aspect-ratio: 161 / 225; object-fit: cover; border-radius: 4px; background: var(--soft); display: block; }
+  .cand .logo { position: absolute; top: 10px; right: 10px; width: 28px; height: 28px; border-radius: 50%; object-fit: cover; background: #fff; box-shadow: 0 0 0 2px var(--paper); }
+  .cand .n { font: 700 16px "IBM Plex Mono", monospace; letter-spacing: .06em; }
+  .cand .nm { font-size: 12.5px; font-weight: 600; line-height: 1.2; overflow-wrap: anywhere; }
+  .cand .pt { font-size: 11px; color: var(--muted); }
+  .cand .tag { font-size: 10.5px; font-weight: 700; color: var(--warn); }
+  .cand.legenda .foto { object-fit: contain; padding: 14px; background: #fff; }
+  .mais { justify-self: start; }
+  .vazio-lista { color: var(--muted); font-size: 14px; }
+  .sub-h { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 700; margin: 4px 0 -4px; }
+
+  .side { position: sticky; top: calc(12px + env(safe-area-inset-top, 0px)); display: grid; gap: 12px; }
+  .side .nota { font-size: 12.5px; color: var(--muted); margin: 0; }
+
+  .card { background: #fff; color: #111; border: 1.5px dashed #8a909c; border-radius: 4px; padding: 12px 14px; width: 100%; }
+  .card h3 { margin: 0; font-size: 14px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; }
+  .card .sub { font-size: 10.5px; color: #555; margin-bottom: 6px; }
+  .card ol { list-style: none; margin: 0; padding: 0; }
+  .card li { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 0 8px; align-items: center; padding: 5px 0; border-top: 1px solid #ddd; }
+  .card li img, .card li .noimg { width: 34px; height: 44px; object-fit: cover; border-radius: 3px; background: #eee; grid-row: 1 / span 2; }
+  .card .cg { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: #555; font-weight: 700; }
+  .card .qm { font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+  .card .bx { grid-column: 3; grid-row: 1 / span 2; display: flex; gap: 2px; }
+  .card .bx span { width: 20px; height: 26px; border: 1.5px solid #222; border-radius: 3px; display: grid; place-items: center; font: 700 15px "IBM Plex Mono", monospace; }
+  .card .bx .br { width: auto; padding: 0 6px; font: 800 10.5px "Archivo", sans-serif; letter-spacing: .06em; background: #f2f2f2; }
+  .card .ft { margin-top: 6px; font-size: 9.5px; color: #555; }
+  .copia2 { display: none; }
+
+  footer { color: var(--muted); font-size: 13px; }
+  footer p { margin: 4px 0; max-width: 80ch; }
+
+  @media print {
+    @page { size: A4; margin: 10mm; }
+    body { background: #fff; padding: 0; }
+    header, .aviso, main.cargos, .side > :not(#cartoes), footer { display: none !important; }
+    .page, .layout { display: block; }
+    .side { position: static; display: block; }
+    #cartoes { display: flex; flex-wrap: wrap; gap: 8mm; }
+    .card { width: 90mm; break-inside: avoid; }
+    .copia2 { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>Colinha — Eleições 2026, São Paulo</h1>
+    <p>Escolha um candidato em cada cargo, na mesma ordem da urna, e imprima. Nada vem marcado: o que você escolher fica salvo só neste navegador. 1º turno: domingo, 4 de outubro de 2026.</p>
+    <p class="repo"><a class="btn-repo" href="https://github.com/celso-alexandre/colinha-eleicoes-sp-2026" target="_blank" rel="noopener">Achou um erro? Contribua no GitHub</a></p>
+  </header>
+
+  <div class="aviso" role="note">
+    Revisado por IA. Pode conter informações incorretas. Verifique.
+    <small>Confira cada número no <a href="https://divulgacandcontas.tse.jus.br/" target="_blank" rel="noopener">DivulgaCandContas do TSE</a> antes de votar. Dados de 24/09/2026; candidaturas podem mudar até a eleição.</small>
+  </div>
+
+  <div class="layout">
+    <main class="cargos" id="cargos"></main>
+
+    <aside class="side">
+      <button type="button" class="imprimir" id="imprimir">Imprimir colinha</button>
+      <div id="cartoes"></div>
+      <p class="nota">Saem duas cópias em tamanho de bolso, com linha para recortar. Pode levar a colinha em papel para a cabine; celular não pode.</p>
+      <button type="button" class="limpar" id="limpar-tudo">Limpar todas as escolhas</button>
+    </aside>
+  </div>
+
+  <footer>
+    <p>Fonte dos dados e fotos: TSE (DivulgaCandContas), obtidos via colinha.ai em 24/09/2026. Não aparecem candidatos que renunciaram ou tiveram o registro negado em definitivo.</p>
+    <p>"Sub judice" indica registro negado com recurso pendente: o nome está na urna, mas o voto pode ser anulado se o recurso perder.</p>
+    <p>Página independente, sem ligação com partidos ou candidatos. Código e dados abertos no <a href="https://github.com/celso-alexandre/colinha-eleicoes-sp-2026" target="_blank" rel="noopener">GitHub</a>: correções são bem-vindas.</p>
+  </footer>
+</div>
+
+<script src="candidatos.js"></script>
+<script>
+(function () {
+  const D = window.DADOS;
+  const P = D.partidos;
+
+  // Ordem oficial da urna em 2026 (TRE-SP)
+  const CARGOS = [
+    { id: 'depfed', lista: 'depfed', nome: 'Deputado federal', dig: 4, legenda: true },
+    { id: 'depest', lista: 'depest', nome: 'Deputado estadual', dig: 5, legenda: true },
+    { id: 'sen1', lista: 'sen', nome: 'Senador — 1ª vaga', dig: 3 },
+    { id: 'sen2', lista: 'sen', nome: 'Senador — 2ª vaga', dig: 3 },
+    { id: 'gov', lista: 'gov', nome: 'Governador', dig: 2 },
+    { id: 'pres', lista: 'pres', nome: 'Presidente', dig: 2 },
+  ];
+  const POR_PAGINA = 48;
+  const KEY = 'colinha-sp-2026-v1';
+
+  const byNum = {};
+  CARGOS.forEach(c => {
+    if (byNum[c.lista]) return;
+    byNum[c.lista] = {};
+    D.cand[c.lista].forEach(x => { byNum[c.lista][x.n] = x; });
+  });
+  const partidosDoCargo = {};
+  Object.keys(D.cand).forEach(l => {
+    const cnt = {};
+    D.cand[l].forEach(x => { cnt[x.p] = (cnt[x.p] || 0) + 1; });
+    partidosDoCargo[l] = Object.keys(cnt).sort((a, b) => Number(P[a].num) - Number(P[b].num)).map(s => ({ s, n: cnt[s] }));
+  });
+  const partidoPorNum = {};
+  Object.keys(P).forEach(s => { partidoPorNum[P[s].num] = s; });
+
+  // Estado: { [cargoId]: { num: '', branco: false } } — começa vazio
+  let escolhas = {};
+  try { escolhas = JSON.parse(localStorage.getItem(KEY)) || {}; } catch (e) { escolhas = {}; }
+  const ui = {}; // filtros por cargo (não salvos)
+  CARGOS.forEach(c => {
+    if (!escolhas[c.id]) escolhas[c.id] = { num: '', branco: false };
+    ui[c.id] = { partido: '', busca: '', limite: POR_PAGINA };
+  });
+  function salvar() { try { localStorage.setItem(KEY, JSON.stringify(escolhas)); } catch (e) {} }
+
+  const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+  const semAcento = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const foto = x => x.f ? `fotos/${x.f}.jpeg` : '';
+  const logo = s => P[s] && P[s].logo ? `partidos/${s.toLowerCase()}.jpg` : '';
+  const nomePartido = s => P[s] ? P[s].nome : s;
+
+  // Resolve o que o número digitado significa para o cargo
+  function resolver(c, num) {
+    if (!num) return null;
+    const cand = byNum[c.lista][num];
+    if (cand) return { tipo: 'cand', cand };
+    if (c.legenda && num.length === 2 && partidoPorNum[num] && partidosDoCargo[c.lista].some(p => p.s === partidoPorNum[num]))
+      return { tipo: 'legenda', partido: partidoPorNum[num] };
+    return { tipo: 'desconhecido' };
+  }
+
+  function verificar(c) {
+    const e = escolhas[c.id];
+    if (e.branco) return ['ok', 'Voto em branco: aperte BRANCO e depois CONFIRMA.'];
+    if (!e.num) return ['', ''];
+    const okLen = e.num.length === c.dig || (c.legenda && e.num.length === 2);
+    if (!okLen) return ['bad', `O número precisa ter ${c.dig} dígitos${c.legenda ? ' (ou 2 para votar só no partido)' : ''}.`];
+    const r = resolver(c, e.num);
+    if (r.tipo === 'desconhecido') {
+      if (c.legenda && e.num.length === 2) return ['bad', 'Nenhum partido com esse número tem candidatos a esse cargo em SP. O voto seria nulo.'];
+      return ['bad', 'Nenhum candidato de SP com esse número nesse cargo. O voto seria nulo. Confira.'];
+    }
+    if (c.id === 'sen2' && !escolhas.sen1.branco && escolhas.sen1.num && e.num === escolhas.sen1.num)
+      return ['bad', 'Não dá para votar no mesmo candidato nas duas vagas de senador. A urna não aceita.'];
+    if (r.tipo === 'legenda') return ['ok', `Voto na legenda: conta para o ${nomePartido(r.partido)}.`];
+    if (r.cand.st === 'rec') return ['warn', 'Registro negado, com recurso pendente (sub judice). Está na urna, mas o voto pode ser anulado.'];
+    if (r.cand.st === 'pend') return ['warn', 'Registro ainda não julgado pelo TSE.'];
+    return ['ok', 'Candidato confere com a lista do TSE.'];
+  }
+
+  function numeroOk(c, e) {
+    if (e.branco || !e.num) return false;
+    const r = resolver(c, e.num);
+    return r && r.tipo !== 'desconhecido';
+  }
+
+  function caixaEscolha(c) {
+    const e = escolhas[c.id];
+    if (e.branco) return `<div class="ph" aria-hidden="true"></div><div class="info"><div class="nm">Voto em branco</div></div>`;
+    if (!e.num) return `<div class="info vazio">Nenhuma escolha ainda. Toque num candidato abaixo ou digite o número.</div>`;
+    const r = resolver(c, e.num);
+    if (r.tipo === 'cand') {
+      const x = r.cand;
+      return `${x.f ? `<img class="ph" src="${foto(x)}" alt="">` : '<div class="ph"></div>'}
+        <div class="info"><div class="nm">${esc(x.n)} · ${esc(x.nm)}</div><div class="pt">${esc(nomePartido(x.p))}</div></div>`;
+    }
+    if (r.tipo === 'legenda') {
+      return `${logo(r.partido) ? `<img class="ph" style="object-fit:contain;background:#fff" src="${logo(r.partido)}" alt="">` : '<div class="ph"></div>'}
+        <div class="info"><div class="nm">${esc(e.num)} · Legenda ${esc(nomePartido(r.partido))}</div><div class="pt">Voto no partido, sem escolher candidato</div></div>`;
+    }
+    return `<div class="ph"></div><div class="info"><div class="nm">${esc(e.num)}</div><div class="pt">Número não encontrado</div></div>`;
+  }
+
+  function filtrar(c) {
+    const f = ui[c.id];
+    const q = semAcento(f.busca.trim());
+    return D.cand[c.lista].filter(x =>
+      (!f.partido || x.p === f.partido) &&
+      (!q || semAcento(x.nm).includes(q) || x.n.startsWith(q))
+    );
+  }
+
+  function cartao(x, selecionado) {
+    const tag = x.st === 'rec' ? '<span class="tag">Sub judice</span>' : x.st === 'pend' ? '<span class="tag">Não julgado</span>' : '';
+    return `<button type="button" class="cand" data-num="${esc(x.n)}" aria-pressed="${selecionado}">
+      ${x.f ? `<img class="foto" loading="lazy" src="${foto(x)}" alt="Foto de ${esc(x.nm)}">` : '<div class="foto" role="img" aria-label="Sem foto"></div>'}
+      ${logo(x.p) ? `<img class="logo" loading="lazy" src="${logo(x.p)}" alt="${esc(nomePartido(x.p))}">` : ''}
+      <span class="n">${esc(x.n)}</span><span class="nm">${esc(x.nm)}</span><span class="pt">${esc(nomePartido(x.p))}</span>${tag}
+    </button>`;
+  }
+
+  function cartaoLegenda(s, selecionado) {
+    return `<button type="button" class="cand legenda" data-num="${esc(P[s].num)}" aria-pressed="${selecionado}">
+      ${logo(s) ? `<img class="foto" loading="lazy" src="${logo(s)}" alt="">` : '<div class="foto"></div>'}
+      <span class="n">${esc(P[s].num)}</span><span class="nm">Legenda ${esc(nomePartido(s))}</span><span class="pt">Voto só no partido</span>
+    </button>`;
+  }
+
+  function renderGrade(c) {
+    const box = document.getElementById(`grade-${c.id}`);
+    const f = ui[c.id];
+    const e = escolhas[c.id];
+    const lista = filtrar(c);
+    let html = '';
+    if (c.legenda && f.partido && !f.busca.trim()) {
+      html += `<div class="sub-h">Votar só no partido</div><div class="grade">${cartaoLegenda(f.partido, !e.branco && e.num === P[f.partido].num)}</div><div class="sub-h">Candidatos</div>`;
+    }
+    if (!lista.length) {
+      html += '<p class="vazio-lista">Nenhum candidato encontrado com esse filtro.</p>';
+    } else {
+      html += `<div class="grade">${lista.slice(0, f.limite).map(x => cartao(x, !e.branco && e.num === x.n)).join('')}</div>`;
+      if (lista.length > f.limite) html += `<button type="button" class="mais" data-mais="${c.id}">Mostrar mais (${lista.length - f.limite} restantes)</button>`;
+    }
+    box.innerHTML = html;
+  }
+
+  function renderEscolha(c) {
+    document.getElementById(`escolha-${c.id}`).innerHTML = caixaEscolha(c);
+    const [cls, txt] = verificar(c);
+    const m = document.getElementById(`msg-${c.id}`);
+    m.className = 'msg ' + cls; m.textContent = txt;
+    const inp = document.getElementById(`num-${c.id}`);
+    if (document.activeElement !== inp) inp.value = escolhas[c.id].branco ? '' : escolhas[c.id].num;
+  }
+
+  function renderCartoes() {
+    const linhas = CARGOS.map(c => {
+      const e = escolhas[c.id];
+      let img = '<div class="noimg"></div>', quem = '&nbsp;', bx;
+      if (e.branco) { quem = 'Voto em branco'; bx = '<span class="br">BRANCO</span>'; }
+      else {
+        const r = resolver(c, e.num);
+        if (r && r.tipo === 'cand') { quem = esc(r.cand.nm) + ' · ' + esc(nomePartido(r.cand.p)); if (r.cand.f) img = `<img src="${foto(r.cand)}" alt="">`; }
+        else if (r && r.tipo === 'legenda') { quem = 'Legenda ' + esc(nomePartido(r.partido)); if (logo(r.partido)) img = `<img src="${logo(r.partido)}" alt="" style="object-fit:contain;background:#fff">`; }
+        const len = (c.legenda && e.num.length === 2) ? 2 : c.dig;
+        bx = Array.from({ length: len }, (_, i) => `<span>${esc(e.num[i] || '')}</span>`).join('');
+      }
+      return `<li>${img}<div class="cg">${c.nome}</div><div class="bx">${bx}</div><div class="qm">${quem}</div></li>`;
+    }).join('');
+    const um = (extra) => `<div class="card ${extra}"><h3>Minha colinha · SP</h3><div class="sub">Eleições 2026 · 1º turno 04/10 · nesta ordem na urna</div><ol>${linhas}</ol>
+      <div class="ft">Digite o número → confira foto e nome → CONFIRMA (verde). Errou? CORRIGE (laranja).</div></div>`;
+    document.getElementById('cartoes').innerHTML = um('') + um('copia2');
+  }
+
+  function renderTudo() { CARGOS.forEach(c => { renderEscolha(c); renderGrade(c); }); renderCartoes(); }
+
+  function escolher(c, num) {
+    escolhas[c.id] = { num, branco: false };
+    salvar(); renderEscolha(c); renderGrade(c);
+    if (c.id === 'sen1') renderEscolha(CARGOS.find(k => k.id === 'sen2'));
+    renderCartoes();
+  }
+
+  // Monta a estrutura de cada cargo
+  const main = document.getElementById('cargos');
+  main.style.display = 'grid'; main.style.gap = '16px';
+  CARGOS.forEach((c, i) => {
+    const partidos = partidosDoCargo[c.lista];
+    const sec = document.createElement('section');
+    sec.className = 'cargo';
+    sec.setAttribute('aria-labelledby', `h-${c.id}`);
+    sec.innerHTML = `
+      <div class="cargo-head">
+        <h2 id="h-${c.id}"><span class="ord">${i + 1}/6</span>${c.nome}</h2>
+        <span class="hint">${c.dig} dígitos${c.legenda ? ' · ou 2 = só o partido' : ''} · ${D.cand[c.lista].length} candidatos</span>
+      </div>
+      <div class="escolha" id="escolha-${c.id}"></div>
+      <div class="manual">
+        <label for="num-${c.id}">Número</label>
+        <input type="text" class="num" id="num-${c.id}" inputmode="numeric" autocomplete="off" maxlength="${c.dig}" placeholder="${'0'.repeat(c.dig)}">
+        <button type="button" class="branco" data-branco="${c.id}">Branco</button>
+        <button type="button" class="limpar" data-limpar="${c.id}">Limpar</button>
+      </div>
+      <div class="msg" id="msg-${c.id}" role="status"></div>
+      <div class="filtros">
+        <select id="partido-${c.id}" aria-label="Filtrar por partido">
+          <option value="">Todos os partidos</option>
+          ${partidos.map(p => `<option value="${p.s}">${P[p.s].num} · ${esc(nomePartido(p.s))} (${p.n})</option>`).join('')}
+        </select>
+        <input type="search" id="busca-${c.id}" placeholder="Buscar por nome ou número" aria-label="Buscar candidato" autocomplete="off">
+      </div>
+      <div id="grade-${c.id}"></div>`;
+    main.appendChild(sec);
+
+    sec.querySelector(`#num-${c.id}`).addEventListener('input', ev => {
+      const v = ev.target.value.replace(/\D/g, '').slice(0, c.dig);
+      ev.target.value = v;
+      escolhas[c.id] = { num: v, branco: false };
+      salvar(); renderEscolha(c); renderGrade(c);
+      if (c.id === 'sen1') renderEscolha(CARGOS[3]);
+      renderCartoes();
+    });
+    sec.querySelector(`#partido-${c.id}`).addEventListener('change', ev => { ui[c.id].partido = ev.target.value; ui[c.id].limite = POR_PAGINA; renderGrade(c); });
+    sec.querySelector(`#busca-${c.id}`).addEventListener('input', ev => { ui[c.id].busca = ev.target.value; ui[c.id].limite = POR_PAGINA; renderGrade(c); });
+    sec.addEventListener('click', ev => {
+      const b = ev.target.closest('button');
+      if (!b) return;
+      if (b.dataset.num !== undefined) {
+        const e = escolhas[c.id];
+        escolher(c, (!e.branco && e.num === b.dataset.num) ? '' : b.dataset.num);
+      } else if (b.dataset.branco) {
+        escolhas[c.id] = { num: '', branco: true }; salvar(); renderEscolha(c); renderGrade(c); if (c.id === 'sen1') renderEscolha(CARGOS[3]); renderCartoes();
+      } else if (b.dataset.limpar) {
+        escolher(c, '');
+      } else if (b.dataset.mais) {
+        ui[c.id].limite += POR_PAGINA * 2; renderGrade(c);
+      }
+    });
+  });
+
+  document.getElementById('imprimir').addEventListener('click', () => window.print());
+  document.getElementById('limpar-tudo').addEventListener('click', () => {
+    CARGOS.forEach(c => { escolhas[c.id] = { num: '', branco: false }; });
+    salvar(); renderTudo();
+  });
+
+  renderTudo();
+})();
+</script>
+</body>
+</html>
