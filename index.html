@@ -131,7 +131,9 @@
   .card .bx span { width: 20px; height: 26px; border: 1.5px solid #222; border-radius: 3px; display: grid; place-items: center; font: 700 15px "IBM Plex Mono", monospace; }
   .card .bx .br { width: auto; padding: 0 6px; font: 800 10.5px "Archivo", sans-serif; letter-spacing: .06em; background: #f2f2f2; }
   .card .ft { margin-top: 6px; font-size: 9.5px; color: #555; }
-  .copia2 { display: none; }
+  .copia-extra { display: none; }
+  .copias { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; font-size: 14px; }
+  .copias input { width: 5ch; font: 700 15px "IBM Plex Mono", monospace; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); }
 
   footer { color: var(--muted); font-size: 13px; }
   footer p { margin: 4px 0; max-width: 80ch; }
@@ -144,7 +146,7 @@
     .side { position: static; display: block; }
     #cartoes { display: flex; flex-wrap: wrap; gap: 8mm; }
     .card { width: 90mm; break-inside: avoid; }
-    .copia2 { display: block; }
+    .copia-extra { display: block; }
   }
   @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
 </style>
@@ -167,8 +169,9 @@
 
     <aside class="side">
       <button type="button" class="imprimir" id="imprimir">Imprimir colinha</button>
+      <div class="copias"><label for="copias">Cópias na impressão</label><input type="number" id="copias" min="1" max="12" step="1" value="4" inputmode="numeric"></div>
       <div id="cartoes"></div>
-      <p class="nota">Saem duas cópias em tamanho de bolso, com linha para recortar. Pode levar a colinha em papel para a cabine; celular não pode.</p>
+      <p class="nota">Cada cópia sai em tamanho de bolso, com linha para recortar (4 cabem numa folha A4). Pode levar a colinha em papel para a cabine; celular não pode.</p>
       <button type="button" class="limpar" id="limpar-tudo">Limpar todas as escolhas</button>
     </aside>
   </div>
@@ -222,6 +225,12 @@
     ui[c.id] = { partido: '', busca: '', limite: POR_PAGINA };
   });
   function salvar() { try { localStorage.setItem(KEY, JSON.stringify(escolhas)); } catch (e) {} }
+
+  // Número de cópias impressas (chave separada, não mexe nas escolhas)
+  const KEY_COPIAS = 'colinha-sp-2026-copias';
+  const limitarCopias = v => Math.min(12, Math.max(1, Math.round(Number(v)) || 4));
+  let copias = 4;
+  try { const v = localStorage.getItem(KEY_COPIAS); if (v) copias = limitarCopias(v); } catch (e) {}
 
   const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
   const semAcento = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
@@ -349,7 +358,7 @@
     }).join('');
     const um = (extra) => `<div class="card ${extra}"><h3>Minha colinha · SP</h3><div class="sub">Eleições 2026 · 1º turno 04/10 · nesta ordem na urna</div><ol>${linhas}</ol>
       <div class="ft">Digite o número → confira foto e nome → CONFIRMA (verde). Errou? CORRIGE (laranja).</div></div>`;
-    document.getElementById('cartoes').innerHTML = um('') + um('copia2');
+    document.getElementById('cartoes').innerHTML = um('') + um('copia-extra').repeat(copias - 1);
   }
 
   function renderTudo() { CARGOS.forEach(c => { renderEscolha(c); renderGrade(c); }); renderCartoes(); }
@@ -418,6 +427,14 @@
     });
   });
 
+  const inpCopias = document.getElementById('copias');
+  inpCopias.value = copias;
+  inpCopias.addEventListener('change', () => {
+    copias = limitarCopias(inpCopias.value);
+    inpCopias.value = copias;
+    try { localStorage.setItem(KEY_COPIAS, String(copias)); } catch (e) {}
+    renderCartoes();
+  });
   document.getElementById('imprimir').addEventListener('click', () => window.print());
   document.getElementById('limpar-tudo').addEventListener('click', () => {
     CARGOS.forEach(c => { escolhas[c.id] = { num: '', branco: false }; });
