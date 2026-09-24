@@ -55,6 +55,12 @@
   .aviso small { display: block; font-weight: 400; color: var(--muted); margin-top: 2px; }
   a { color: var(--accent); }
   header .repo { margin-top: 10px; }
+  .datas { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0 12px; }
+  .data { display: grid; gap: 1px; background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 8px 14px; }
+  .data:first-child { border: 2px solid var(--confirma); }
+  .data .rot { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  .data strong { font-size: 17px; font-weight: 800; }
+  .data .hora { font-size: 12.5px; color: var(--muted); }
   .btn-repo {
     display: inline-block; font-weight: 700; font-size: 14px; text-decoration: none; color: var(--ink);
     border: 1px solid var(--line); background: var(--paper); border-radius: 6px; padding: 8px 12px;
@@ -155,7 +161,11 @@
 <div class="page">
   <header>
     <h1>Colinha — Eleições 2026, São Paulo</h1>
-    <p>Escolha um candidato em cada cargo, na mesma ordem da urna, e imprima. Nada vem marcado: o que você escolher fica salvo só neste navegador. 1º turno: domingo, 4 de outubro de 2026.</p>
+    <div class="datas">
+      <div class="data"><span class="rot">1º turno</span><strong>Domingo, 4 de outubro de 2026</strong><span class="hora">das 8h às 17h (horário de Brasília)</span></div>
+      <div class="data"><span class="rot">2º turno, se houver</span><strong>Domingo, 25 de outubro de 2026</strong><span class="hora">só presidente e governador</span></div>
+    </div>
+    <p>Escolha um candidato em cada cargo, na mesma ordem da urna, e imprima. Nada vem marcado: o que você escolher fica salvo só neste navegador.</p>
     <p class="repo"><a class="btn-repo" href="https://github.com/celso-alexandre/colinha-eleicoes-sp-2026" target="_blank" rel="noopener">Achou um erro? Contribua no GitHub</a></p>
   </header>
 
@@ -356,7 +366,7 @@
       }
       return `<li>${img}<div class="cg">${c.nome}</div><div class="bx">${bx}</div><div class="qm">${quem}</div></li>`;
     }).join('');
-    const um = (extra) => `<div class="card ${extra}"><h3>Minha colinha · SP</h3><div class="sub">Eleições 2026 · 1º turno 04/10 · nesta ordem na urna</div><ol>${linhas}</ol>
+    const um = (extra) => `<div class="card ${extra}"><h3>Minha colinha · SP</h3><div class="sub">Eleições 2026 · 1º turno dom. 04/10/2026, 8h–17h · nesta ordem na urna</div><ol>${linhas}</ol>
       <div class="ft">Digite o número → confira foto e nome → CONFIRMA (verde). Errou? CORRIGE (laranja).</div></div>`;
     document.getElementById('cartoes').innerHTML = um('') + um('copia-extra').repeat(copias - 1);
   }
